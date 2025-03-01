@@ -1,0 +1,19 @@
+/* eslint-disable prettier/prettier */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+import { Body, Controller, HttpCode, HttpStatus, Post } from "@nestjs/common";
+import { AuthService } from "./auth.service";
+import { AuthRegisterLoginDto } from "./dto/auth-register-login.dto";
+
+@Controller({
+    path: "auth",
+    version: '1',
+})
+export class AuthController {
+    constructor(private authService: AuthService) {}
+
+    @Post('email/register')
+    @HttpCode(HttpStatus.NO_CONTENT)
+    async register(@Body() authRegisterDTO: AuthRegisterLoginDto):Promise<void>{
+        return this.authService.register(authRegisterDTO);
+    }
+}
