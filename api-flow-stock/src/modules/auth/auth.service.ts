@@ -1,3 +1,4 @@
+import { MailService } from './../mail/mail.service';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
@@ -11,7 +12,8 @@ export class AuthService {
   constructor(
     private userService: UserService,
     private jwtService: JwtService,
-    private configService: ConfigService<AllConfigType>
+    private configService: ConfigService<AllConfigType>,
+    private mailService: MailService
   ) {}
 
   async register(dto: AuthRegisterLoginDto): Promise<void> {
@@ -33,7 +35,12 @@ export class AuthService {
         }),
       }
     );
-    console.log(hash);
-    //todo: envio de email com hash para cadastro
+    await this.mailService.userSignUp({
+      to: dto.email,
+      data: {
+        hash
+      }
+    });
+
   }
 }

@@ -7,13 +7,17 @@ import { UsersModule } from './modules/users/users.module';
 import User from './modules/users/entities/user.entity';
 import { AuthModule } from './modules/auth/auth.module';
 import authConfig from './modules/auth/config/auth.config';
+import appConfig from './config/app.config'; // Import appConfig
+import mailConfig from './modules/mail/config/mail.config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
-        authConfig
+        authConfig,
+        appConfig,
+        mailConfig
       ],
       envFilePath: ['.env'],
     }),

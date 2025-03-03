@@ -47,5 +47,5 @@ export class CreateUserDto {
 
   @IsInt()
   @IsOptional() // Opcional, mas um valor será atribuído automaticamente pelo banco
-  active: number = 1; // Valor padrão caso não seja informado
+  active: number = 0; // Valor padrão caso não seja informado
 }
