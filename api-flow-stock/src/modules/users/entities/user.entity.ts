@@ -7,6 +7,7 @@ import {
   UpdateDateColumn,
   Unique,
 } from 'typeorm';
+import { RoleEnum } from '../../../roles/roles.enum'; 
 
 @Entity('users')
 @Unique(['email'])
@@ -21,21 +22,19 @@ export default class User {
   email: string;
 
   @Column({ type: 'timestamp', nullable: true })
-  emailVerifiedAt: Date | null;
+  emailVerifiedAt: Date | null; 
 
   @Column({ type: 'varchar', length: 191, nullable: false })
   password: string;
 
   @Column({ type: 'varchar', length: 100, nullable: true })
-  rememberToken: string | null;
+  rememberToken: string | null; 
 
   @CreateDateColumn({ type: 'datetime' })
   createdAt: Date;
 
-  @UpdateDateColumn({
-    type: 'datetime',
-  })
-  updatedAt: Date;
+  @UpdateDateColumn({ type: 'datetime' })
+  updatedAt: Date; 
 
   @Column({ type: 'varchar', length: 45, nullable: false })
   phone: string;
@@ -43,9 +42,14 @@ export default class User {
   @Column({ type: 'varchar', length: 45, nullable: false })
   avatar: string;
 
-  @Column({ type: 'varchar', length: 45, nullable: false, default: 'user' })
-  level: string;
+  @Column({
+    type: 'enum',
+    enum: RoleEnum,
+    default: RoleEnum.USER,
+    nullable: false,
+  })
+  level: RoleEnum; 
 
-  @Column({ type: 'tinyint', default: 1 })
-  active: number;
+  @Column({ type: 'tinyint', default: 1, nullable: false })
+  active: number; // Mantido como number (0 ou 1)
 }

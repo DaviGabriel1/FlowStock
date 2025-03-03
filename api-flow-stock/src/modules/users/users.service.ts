@@ -6,6 +6,7 @@ import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserRepository } from './repositories/UserRepository.repository';
+import { UpdateUserDTO } from './dto/update-user.dto';
 
 @Injectable()
 export class UserService {
@@ -19,8 +20,7 @@ export class UserService {
   }
 
   async findOne(id: number): Promise<User | null> {
-    const active = 1;
-    return await this.userRepository.findOne({ where: { id, active } });
+    return await this.userRepository.findOne({ where: { id } });
   }
 
   async create(createUserDTO: CreateUserDto): Promise<User> {
@@ -62,5 +62,9 @@ export class UserService {
       rememberToken: crypto.randomBytes(32).toString('hex'),
     }); // Atribui o hash da senha diretamente
     return await this.userRepository.save(user);
+  }
+
+  async update(id:number,updateUserDTO: UpdateUserDTO): Promise<any> {
+    return await this.userRepository.update(id,updateUserDTO);
   }
 }

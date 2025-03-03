@@ -1,4 +1,4 @@
-/* eslint-disable prettier/prettier */
+import { CreateUserDto } from './create-user.dto';
 import { Transform } from 'class-transformer';
 import {
   IsString,
@@ -6,11 +6,11 @@ import {
   IsNotEmpty,
   IsOptional,
   IsInt,
-  IsEnum
+  IsEnum,
 } from 'class-validator';
 import { RoleEnum } from 'src/roles/roles.enum';
 
-export class CreateUserDto {
+export class UpdateUserDTO{
   @IsString()
   @IsNotEmpty()
   name: string;
