@@ -15,6 +15,8 @@ import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
 import ms from 'ms';
 import Session from '../session/entities/session.entity';
+import { ProviderEnum } from './auth-providers.enum';
+import { SocialInterface } from '../social/interfaces/social.interface';
 
 @Injectable()
 export class AuthService {
@@ -32,6 +34,8 @@ export class AuthService {
       email: dto.email,
       active: 0,
       level: RoleEnum.USER,
+      provider: ProviderEnum.EMAIL,
+      socialId: null,
       avatar: 'teste-avatar', //substitui pelo id do avatar default do cloudnary
     });
     const hash = await this.jwtService.signAsync(
@@ -202,6 +206,86 @@ export class AuthService {
       tokenExpires,
       user,
     }
+  }
+
+  async validateSocialLogin(
+    authProvider: ProviderEnum,
+    socialData: SocialInterface
+  ): Promise<LoginResponseDto>{
+    let user: User | null = null;
+    const socialEmail = socialData.email?.toLowerCase();
+    let userByEmail: User | null = null;
+
+    if (socialEmail) {
+      userByEmail = await this.userService.findByEmail(socialEmail);
+    }
+
+    if (socialData.id) {
+      user = await this.userService.findBySocialIdAndProvider({
+        socialId: socialData.id,
+        provider: authProvider
+      });
+    }
+
+    if (user) {
+      if (socialEmail && !userByEmail) {
+        user.email = socialEmail;
+      }
+      await this.userService.update(user.id, user);
+    }
+    else if (userByEmail) {
+      user = userByEmail;
+    }
+    else if (socialData.id) {
+      const active = 1;
+
+      user = await this.userService.create({
+        email: socialEmail ?? "tempOption",
+        name: socialData.name ?? 'guest',
+        emailVerifiedAt: null,
+        password: "re",
+        phone: "11-9999999", //TODO: tornar campos de password, phone, etc opcionais e DEFAULT NULL nos DTOs de createUserByOAuth
+        socialId: socialData.id,
+        level: RoleEnum.USER,
+        avatar: "teste-avatar",//testar a busca de avatar do google
+        provider: authProvider,
+        active
+      });
+      user = await this.userService.findOne(user.id);
+    }
+
+    if (!user) {
+      throw new UnprocessableEntityException({
+        status: HttpStatus.UNPROCESSABLE_ENTITY,
+        errors: {
+          user: 'user not found'
+        }
+      })
+    }
+
+    const hash = crypto
+      .createHash('sha256')
+      .update(randomStringGenerator())
+      .digest('hex');
+    
+    const session = await this.sessionService.create({
+      user,
+      hash
+    });
+
+    const { token: jwtToken, refreshToken, tokenExpires } = await this.getTokensData({
+      id: user.id,
+      level: user.level,
+      sessionId: session.id,
+      hash,
+    });
+
+    return {
+      refreshToken,
+      token: jwtToken,
+      tokenExpires,
+      user,
+    };
   }
 
   private async getTokensData(data: {

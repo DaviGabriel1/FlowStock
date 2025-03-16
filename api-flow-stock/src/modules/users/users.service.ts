@@ -71,4 +71,14 @@ export class UserService {
   async update(id:number,updateUserDTO: UpdateUserDTO): Promise<any> {
     return await this.userRepository.update(id,updateUserDTO);
   }
+
+  async findBySocialIdAndProvider({
+    socialId,
+    provider,
+  }: {
+      socialId: User['socialId'];
+      provider: User['provider'];
+    }): Promise<User | null> {
+    return await this.userRepository.findBySocialIdAndProvider({socialId,provider})
+  }
 }

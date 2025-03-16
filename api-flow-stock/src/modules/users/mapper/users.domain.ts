@@ -12,6 +12,8 @@ export class UserMapper {
         domainEntity.phone = raw.phone;
         domainEntity.avatar = raw.avatar;
         domainEntity.level = raw.level;
+        domainEntity.provider = raw.provider;
+        domainEntity.socialId = raw.socialId;
         domainEntity.active = raw.active;
         domainEntity.createdAt = raw.createdAt;
         domainEntity.updatedAt = raw.updatedAt;

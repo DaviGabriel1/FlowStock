@@ -3,6 +3,7 @@ import { AuthService } from "../auth/auth.service";
 import { LoginResponseDto } from "../auth/dto/login-response.dto";
 import { AuthGoogleLoginDto } from "./dto/AuthGoogleLoginDto.dto";
 import { AuthGoogleService } from "./auth-google.service";
+import { ProviderEnum } from "../auth/auth-providers.enum";
 
 @Controller({
     path: 'auth/google',
@@ -17,7 +18,7 @@ export class AuthGoogleController {
     @Post('login')
     @HttpCode(HttpStatus.OK)
     async login(@Body() loginDto: AuthGoogleLoginDto)/*: Promise<LoginResponseDto> */{
-        //const socialData = await this.authGoogleService.getProfileByToken(loginDto);
-       // return this.authService.validateSocialLogin('google',socialData);
+        const socialData = await this.authGoogleService.getProfileByToken(loginDto);
+        return this.authService.validateSocialLogin(ProviderEnum.GOOGLE,socialData);
     }
 }

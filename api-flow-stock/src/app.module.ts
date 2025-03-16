@@ -11,6 +11,8 @@ import { TypeOrmConfigService } from './modules/database/typeorm-config.service'
 import databaseConfig from './modules/database/config/database.config';
 import { SessionModule } from './modules/session/session.module';
 import Session from './modules/session/entities/session.entity';
+import { AuthGoogleModule } from './modules/auth-google/auth-google.module';
+import googleConfig from './modules/auth-google/config/google.config';
 //import { DatabaseConfig } from './modules/database/config/database-config.type';
 //import { MongooseConfigService } from './modules/database/mongoose-config.service';
 //import { DataSource, DataSourceOptions } from 'typeorm';
@@ -30,7 +32,7 @@ import Session from './modules/session/entities/session.entity';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [authConfig, appConfig, mailConfig, databaseConfig],
+      load: [authConfig, appConfig, mailConfig, databaseConfig, googleConfig],
       envFilePath: ['.env'],
     }),
     //infrastructureDatabaseModule,
@@ -46,7 +48,8 @@ import Session from './modules/session/entities/session.entity';
     }),
     UsersModule,
     AuthModule,
-    SessionModule
+    SessionModule,
+    AuthGoogleModule
   ],
   controllers: [],
   providers: [TypeOrmConfigService],

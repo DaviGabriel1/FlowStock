@@ -8,6 +8,7 @@ import {
   Unique,
 } from 'typeorm';
 import { RoleEnum } from '../../../roles/roles.enum'; 
+import { ProviderEnum } from '../../auth/auth-providers.enum';
 
 @Entity('users')
 @Unique(['email'])
@@ -49,6 +50,17 @@ export default class User {
     nullable: false,
   })
   level: RoleEnum; 
+
+  @Column({
+    type: 'enum',
+    enum: ProviderEnum,
+    default: ProviderEnum.EMAIL,
+    nullable: false
+  })
+  provider: ProviderEnum;
+
+  @Column({ type: 'varchar', length: 255, nullable: true, default: null })
+  socialId: string | null;
 
   @Column({ type: 'tinyint', default: 0, nullable: false })
   active: number; // Mantido como number (0 ou 1)
