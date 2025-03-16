@@ -36,7 +36,6 @@ export class MailService {
       }) + '/confirm-email'
     );
     url.searchParams.set('hash', mailData.data.hash);
-
     await this.mailerService.sendEmail({
       to: mailData.to,
       subject: emailConfirmTitle,

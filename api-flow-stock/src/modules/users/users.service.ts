@@ -23,6 +23,10 @@ export class UserService {
     return await this.userRepository.findOne({ where: { id } });
   }
 
+  async findByEmail(email: string): Promise<User | null> {
+    return await this.userRepository.findByEmail(email);
+  }
+
   async create(createUserDTO: CreateUserDto): Promise<User> {
     if (!createUserDTO) {
       throw new UnprocessableEntityException({

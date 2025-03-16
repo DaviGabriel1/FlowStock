@@ -50,6 +50,6 @@ export default class User {
   })
   level: RoleEnum; 
 
-  @Column({ type: 'tinyint', default: 1, nullable: false })
+  @Column({ type: 'tinyint', default: 0, nullable: false })
   active: number; // Mantido como number (0 ou 1)
 }

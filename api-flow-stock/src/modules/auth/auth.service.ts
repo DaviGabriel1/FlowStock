@@ -1,4 +1,6 @@
+import { SessionService } from './../session/session.service';
 import { MailService } from './../mail/mail.service';
+import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
 import { HttpStatus, Injectable, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
@@ -7,12 +9,19 @@ import { AuthRegisterLoginDto } from './dto/auth-register-login.dto';
 import { RoleEnum } from 'src/roles/roles.enum';
 import { UserService } from '../users/users.service';
 import User from '../users/entities/user.entity';
+import { AuthEmailLoginDto } from './dto/auth-email-login.dto';
+import { LoginResponseDto } from './dto/login-response.dto';
+import * as bcrypt from 'bcrypt';
+import * as crypto from 'crypto';
+import ms from 'ms';
+import Session from '../session/entities/session.entity';
 
 @Injectable()
 export class AuthService {
   constructor(
     private userService: UserService,
     private jwtService: JwtService,
+    private sessionService: SessionService,
     private configService: ConfigService<AllConfigType>,
     private mailService: MailService
   ) {}
@@ -123,5 +132,124 @@ export class AuthService {
     user.active = 1;
 
     await this.userService.update(user.id, user);
+  }
+
+  async validateLogin(loginDto: AuthEmailLoginDto): Promise<LoginResponseDto> {
+    const user = await this.userService.findByEmail(loginDto.email);
+
+    if (!user) {
+      throw new UnprocessableEntityException({
+        status: HttpStatus.UNPROCESSABLE_ENTITY,
+        errors: {
+          email: 'not found'
+        }
+      });
+    }
+
+    if (user.active != 1) {
+      throw new UnprocessableEntityException({
+        status: HttpStatus.UNPROCESSABLE_ENTITY,
+        errors: {
+          password: 'user not verified',
+        },
+      });
+    }
+
+    if (!user.password) {
+      throw new UnprocessableEntityException({
+        status: HttpStatus.UNPROCESSABLE_ENTITY,
+        errors: {
+          password: 'incorrect Password'
+        }
+      });
+    }
+
+    const isValidPassword = await bcrypt.compare(
+      loginDto.password,
+      user.password
+    );
+
+    if (!isValidPassword) {
+      throw new UnprocessableEntityException({
+        status: HttpStatus.UNPROCESSABLE_ENTITY,
+        errors: {
+          password: 'incorrect Password',
+        },
+      });
+    }
+
+    const hash = crypto
+      .createHash('sha256')
+      .update(randomStringGenerator())
+      .digest('hex');
+    
+    const session = await this.sessionService.create({
+      user,
+      hash
+    });
+
+    const { token, refreshToken, tokenExpires } = await this.getTokensData({
+      id: user.id,
+      level: user.level,
+      sessionId: session.id,
+      hash,
+    })
+
+
+    return {
+      refreshToken,
+      token,
+      tokenExpires,
+      user,
+    }
+  }
+
+  private async getTokensData(data: {
+    id: User['id'],
+    level: User['level'],
+    sessionId: Session['id'],
+    hash: Session['hash'];
+  }){
+    const tokenExpiresIn = this.configService.getOrThrow('auth.expires', {
+      infer: true
+    });
+
+    const tokenExpires = Date.now() + ms(tokenExpiresIn);
+
+     const [token, refreshToken] = await Promise.all([
+       await this.jwtService.signAsync(
+         {
+           id: data.id,
+           level: data.level,
+           sessionId: data.sessionId,
+         },
+         {
+           secret: this.configService.getOrThrow('auth.secret', {
+             infer: true,
+           }),
+           expiresIn: tokenExpiresIn,
+         }
+       ),
+       await this.jwtService.signAsync(
+         {
+           sessionId: data.sessionId,
+           hash: data.hash,
+         },
+         {
+           secret: this.configService.getOrThrow('auth.refreshSecret', {
+             infer: true,
+           }),
+           expiresIn: this.configService.getOrThrow('auth.refreshExpires', {
+             infer: true,
+           }),
+         }
+       ),
+     ]);
+    
+    return {
+      token,
+      refreshToken,
+      tokenExpires
+    };
   }
 }

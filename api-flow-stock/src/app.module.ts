@@ -1,26 +1,39 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { AppController } from './app.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppService } from './app.service';
 import { UsersModule } from './modules/users/users.module';
 import User from './modules/users/entities/user.entity';
 import { AuthModule } from './modules/auth/auth.module';
 import authConfig from './modules/auth/config/auth.config';
 import appConfig from './config/app.config'; // Import appConfig
 import mailConfig from './modules/mail/config/mail.config';
+import { TypeOrmConfigService } from './modules/database/typeorm-config.service';
+import databaseConfig from './modules/database/config/database.config';
+import { SessionModule } from './modules/session/session.module';
+import Session from './modules/session/entities/session.entity';
+//import { DatabaseConfig } from './modules/database/config/database-config.type';
+//import { MongooseConfigService } from './modules/database/mongoose-config.service';
+//import { DataSource, DataSourceOptions } from 'typeorm';
+// import { MongooseModule } from '@nestjs/mongoose';
 
+/*const infrastructureDatabaseModule = (databaseConfig() as DatabaseConfig).type === 'mongodb'
+  ? MongooseModule.forRootAsync({
+      useClass: MongooseConfigService,
+    })
+  : TypeOrmModule.forRootAsync({
+      useClass: TypeOrmConfigService,
+      dataSourceFactory: async (options: DataSourceOptions) => {
+        return new DataSource(options).initialize();
+      },
+    });*/
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [
-        authConfig,
-        appConfig,
-        mailConfig
-      ],
+      load: [authConfig, appConfig, mailConfig, databaseConfig],
       envFilePath: ['.env'],
     }),
+    //infrastructureDatabaseModule,
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: process.env.MYSQL_HOST,
@@ -28,14 +41,15 @@ import mailConfig from './modules/mail/config/mail.config';
       username: process.env.MYSQL_USER,
       password: process.env.MYSQL_PASSWORD,
       database: process.env.MYSQL_DATABASE,
-      entities: [User],
+      entities: [User, Session],
       synchronize: true,
     }),
     UsersModule,
-    AuthModule
+    AuthModule,
+    SessionModule
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [TypeOrmConfigService],
 })
 export class AppModule {
   constructor() {}
