@@ -30,7 +30,7 @@ const RegisterForm: React.FC = () => {
         const result = await register(obj);
         showSuccessAlert(
             "Usuário registrado com sucesso!",
-            "veja a caixa de entrada do E-mail para validar usuário"
+            "veja a caixa de entrada do E-mail para validar usuário"+ result
         );
         } catch (error) {
         showErrorAlert("erro", "ocorreu um erro ao se cadastrar");
