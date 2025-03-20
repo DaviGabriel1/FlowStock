@@ -11,6 +11,9 @@ const ConfirmEmail: React.FC = () => {
         const hash = searchHash.get("hash");
 
         try {
+            if (!hash) {
+                return showErrorAlert("erro", 'hash inválido');
+            }
             const validatedHash = await confirmEmailByHash(hash);
 
             if (validatedHash.status == 204) {
@@ -23,7 +26,7 @@ const ConfirmEmail: React.FC = () => {
                 error.response?.data?.error ||
                 "ocorreu um erro ao validar o E-mail"
             );
-            navigate("/register/email");
+            navigate("/#/register/email");
         }
     }
 
