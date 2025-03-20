@@ -1,13 +1,15 @@
 import { HashRouter, Route, Routes } from "react-router-dom"
-import RegisterForm from "./pages/auth/RegisterForm";
-import ConfirmEmail from "./pages/auth/ConfirmEmail";
+import RegisterEmailForm from "./pages/auth/RegisterEmailForm";
+import ConfirmNewEmail from "./pages/auth/ConfirmNewEmail";
+import LoginEmailForm from "./pages/auth/LoginEmailForm";
 
 const App: React.FC = () => {
   return (
     <HashRouter>
       <Routes>
-        <Route path="/register" element={<RegisterForm />} />
-        <Route path="/confirm-email" element={<ConfirmEmail/>} />
+        <Route path="/register/email" element={<RegisterEmailForm />} />
+        <Route path="/confirm-email" element={<ConfirmNewEmail />} />
+        <Route path="/login/email" element={ <LoginEmailForm/> } />
         <Route path="/" element={<h1>Rota Main</h1>} />
       </Routes>
     </HashRouter>

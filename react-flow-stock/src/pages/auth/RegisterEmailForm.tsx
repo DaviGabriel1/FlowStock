@@ -2,8 +2,7 @@ import { useState } from "react";
 import { showErrorAlert, showSuccessAlert } from "../../utils/alerts/alerts";
 import register from "../../api/auth/register";
 
-
-const RegisterForm: React.FC = () => {
+const RegisterEmailForm: React.FC = () => {
 
     
     const [name, setName] = useState<string>("");
@@ -30,10 +29,15 @@ const RegisterForm: React.FC = () => {
         const result = await register(obj);
         showSuccessAlert(
             "Usuário registrado com sucesso!",
-            "veja a caixa de entrada do E-mail para validar usuário"+ result
+            "veja a caixa de entrada do E-mail para validar usuário"
         );
-        } catch (error) {
-        showErrorAlert("erro", "ocorreu um erro ao se cadastrar");
+        } catch (error: any) {
+            showErrorAlert(
+                "erro",
+                error.response?.data?.errors?.email ||
+                error.response?.data?.errors?.password ||
+                "ocorreu um erro ao se cadastrar"
+            );
         }
     };
 
@@ -109,10 +113,12 @@ const RegisterForm: React.FC = () => {
 
           <a href="#">Faça Login pelo google!</a>
 
+          <a href="/login/email">Já tenho uma conta!</a>
+
           <input type="submit" value="Cadastrar" />
         </form>
       </>
     );
 }
 
-export default RegisterForm;
+export default RegisterEmailForm;
