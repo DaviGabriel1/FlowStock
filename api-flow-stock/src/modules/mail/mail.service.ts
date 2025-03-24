@@ -30,12 +30,13 @@ export class MailService {
       ]);
     }
 
-    const url = new URL(
-      this.configService.getOrThrow('app.frontendDomain', {
-        infer: true,
-      }) + '/#/confirm-email'
-    );
-    url.searchParams.set('hash', mailData.data.hash);
+    const frontendDomain = this.configService.getOrThrow('app.frontendDomain', {
+      infer: true,
+    });
+
+    const url = new URL(frontendDomain);
+    url.hash = `/confirm-email/?hash=${mailData.data.hash}`;
+
     await this.mailerService.sendEmail({
       to: mailData.to,
       subject: emailConfirmTitle,

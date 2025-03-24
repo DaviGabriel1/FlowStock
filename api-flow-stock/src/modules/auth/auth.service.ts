@@ -243,7 +243,7 @@ export class AuthService {
         email: socialEmail ?? "tempOption",
         name: socialData.name ?? 'guest',
         emailVerifiedAt: null,
-        password: "re",
+        password: "",
         phone: "11-9999999", //TODO: tornar campos de password, phone, etc opcionais e DEFAULT NULL nos DTOs de createUserByOAuth
         socialId: socialData.id,
         level: RoleEnum.USER,

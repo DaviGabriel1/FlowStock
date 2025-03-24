@@ -153,14 +153,6 @@ const RegisterEmailForm: React.FC = () => {
               className="bg-gray-800/60 border border-purple-700/30 rounded-md px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50"
             />
           </div>
-
-          <a
-            href="#"
-            className="text-blue-300 hover:text-blue-200 text-sm text-center mt-2 transition-colors duration-200"
-          >
-            Faça Login pelo google!
-          </a>
-
           <a
             href="/#/login/email"
             className="text-blue-300 hover:text-blue-200 text-sm text-center transition-colors duration-200"
