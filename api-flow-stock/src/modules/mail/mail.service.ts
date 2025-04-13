@@ -5,7 +5,7 @@ import { MailerService } from '../mailer/mailer.service';
 import { Injectable } from '@nestjs/common';
 import { I18nContext } from 'nestjs-i18n';
 import { MaybeType } from 'src/utils/types/maybe.type';
-import * as path from "path"; 
+import * as path from 'path';
 
 @Injectable()
 export class MailService {
@@ -37,20 +37,27 @@ export class MailService {
     const url = new URL(frontendDomain);
     url.hash = `/confirm-email/?hash=${mailData.data.hash}`;
 
+    const subDirectory = [
+      'modules',
+      'mail',
+      'mail-templates',
+      'activation.hbs',
+    ];
+    const templateBasePath =
+      process.env.NODE_ENV === 'production'
+        ? this.configService.getOrThrow('app.workingDirectory', { infer: true })
+        : path.join(
+            this.configService.getOrThrow('app.workingDirectory', {
+              infer: true,
+            }),
+            'src'
+          );
+
     await this.mailerService.sendEmail({
       to: mailData.to,
       subject: emailConfirmTitle,
       text: `${url.toString()} ${emailConfirmTitle}`,
-      templatePath: path.join(
-        this.configService.getOrThrow('app.workingDirectory', {
-          infer: true,
-        }),
-        'src',
-        'modules',
-        'mail',
-        'mail-templates',
-        'activation.hbs'
-      ),
+      templatePath: path.join(templateBasePath, ...subDirectory),
       context: {
         title: emailConfirmTitle,
         url: url.toString(),

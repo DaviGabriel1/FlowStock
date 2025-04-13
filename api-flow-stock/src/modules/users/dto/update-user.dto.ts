@@ -1,4 +1,3 @@
-import { CreateUserDto } from './create-user.dto';
 import { Transform } from 'class-transformer';
 import {
   IsString,

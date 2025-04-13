@@ -13,6 +13,8 @@ import { SessionModule } from './modules/session/session.module';
 import Session from './modules/session/entities/session.entity';
 import { AuthGoogleModule } from './modules/auth-google/auth-google.module';
 import googleConfig from './modules/auth-google/config/google.config';
+import { ProductModule } from './modules/product/product.module';
+import Product from './modules/product/entities/product.entity';
 //import { DatabaseConfig } from './modules/database/config/database-config.type';
 //import { MongooseConfigService } from './modules/database/mongoose-config.service';
 //import { DataSource, DataSourceOptions } from 'typeorm';
@@ -43,13 +45,14 @@ import googleConfig from './modules/auth-google/config/google.config';
       username: process.env.MYSQL_USER,
       password: process.env.MYSQL_PASSWORD,
       database: process.env.MYSQL_DATABASE,
-      entities: [User, Session],
+      entities: [User, Session, Product],
       synchronize: true,
     }),
     UsersModule,
     AuthModule,
     SessionModule,
-    AuthGoogleModule
+    AuthGoogleModule,
+    ProductModule,
   ],
   controllers: [],
   providers: [TypeOrmConfigService],

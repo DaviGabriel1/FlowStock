@@ -3,7 +3,11 @@
 /node_modules
 /build
 
-# Logs
+# pem security
+*.pem
+APIs-nest.pem
+
+# Logsquero 
 logs
 *.log
 npm-debug.log*

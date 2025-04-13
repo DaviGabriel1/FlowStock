@@ -36,8 +36,10 @@ export class AuthService {
       level: RoleEnum.USER,
       provider: ProviderEnum.EMAIL,
       socialId: null,
-      avatar: 'teste-avatar', //substitui pelo id do avatar default do cloudnary
+      avatar:
+        'https://flowstock-avatar-imgs.s3.us-east-1.amazonaws.com/avatar-default.jpg',
     });
+    console.log('usuário' + dto.name + ' criado com sucesso!');
     const hash = await this.jwtService.signAsync(
       {
         confirmEmailUserId: user.id,
@@ -51,12 +53,14 @@ export class AuthService {
         }),
       }
     );
+    console.log('hash: ' + hash);
     await this.mailService.userSignUp({
       to: dto.email,
       data: {
         hash,
       },
     });
+    console.log('email enviado para ' + dto.email);
   }
 
   async confirmNewEmail(hash: string): Promise<void> {
@@ -240,16 +244,16 @@ export class AuthService {
       const active = 1;
 
       user = await this.userService.create({
-        email: socialEmail ?? "tempOption",
+        email: socialEmail ?? 'tempOption',
         name: socialData.name ?? 'guest',
         emailVerifiedAt: null,
-        password: "",
-        phone: "11-9999999", //TODO: tornar campos de password, phone, etc opcionais e DEFAULT NULL nos DTOs de createUserByOAuth
+        password: '',
+        phone: '11-9999999', //TODO: tornar campos de password, phone, etc opcionais e DEFAULT NULL nos DTOs de createUserByOAuth
         socialId: socialData.id,
         level: RoleEnum.USER,
-        avatar: "teste-avatar",//testar a busca de avatar do google
+        avatar: 'https://flowstock-react.s3.us-east-2.amazonaws.com/avatar-user/avatar+padrao.jpg',
         provider: authProvider,
-        active
+        active,
       });
       user = await this.userService.findOne(user.id);
     }

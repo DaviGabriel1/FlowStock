@@ -32,7 +32,7 @@ class EnvironmentVariablesValidator {
 }
 
 export default registerAs<AuthConfig>('auth', () => {
-  validateConfig(process.env, EnvironmentVariablesValidator);
+  //validateConfig(process.env, EnvironmentVariablesValidator);
 
   return {
     secret: process.env.AUTH_JWT_SECRET,

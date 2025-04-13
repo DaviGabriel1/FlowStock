@@ -27,7 +27,7 @@ export default class User {
 
   @Column({ type: 'varchar', length: 191, nullable: false })
   password: string;
-
+ 
   @Column({ type: 'varchar', length: 100, nullable: true })
   rememberToken: string | null; 
 
