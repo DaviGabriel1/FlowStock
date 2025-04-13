@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './modules/users/users.module';
 import User from './modules/users/entities/user.entity';
@@ -15,6 +15,9 @@ import { AuthGoogleModule } from './modules/auth-google/auth-google.module';
 import googleConfig from './modules/auth-google/config/google.config';
 import { ProductModule } from './modules/product/product.module';
 import Product from './modules/product/entities/product.entity';
+import s3Config from './modules/upload/config/s3.config';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
 //import { DatabaseConfig } from './modules/database/config/database-config.type';
 //import { MongooseConfigService } from './modules/database/mongoose-config.service';
 //import { DataSource, DataSourceOptions } from 'typeorm';
@@ -34,11 +37,19 @@ import Product from './modules/product/entities/product.entity';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [authConfig, appConfig, mailConfig, databaseConfig, googleConfig],
+      load: [
+        authConfig,
+        appConfig,
+        mailConfig,
+        databaseConfig,
+        googleConfig,
+        s3Config,
+      ],
       envFilePath: ['.env'],
     }),
     //infrastructureDatabaseModule,
     TypeOrmModule.forRoot({
+      //TODO: databaseModuleConfig
       type: 'mysql',
       host: process.env.MYSQL_HOST,
       port: Number(process.env.MYSQL_PORT),
@@ -48,6 +59,18 @@ import Product from './modules/product/entities/product.entity';
       entities: [User, Session, Product],
       synchronize: true,
     }),
+    ThrottlerModule.forRoot({
+      throttlers: [
+        {
+          ttl: process.env.RATE_LIMIT_TTL
+            ? parseInt(process.env.RATE_LIMIT_TTL)
+            : 60,
+          limit: process.env.RATE_LIMIT_LIMIT
+            ? parseInt(process.env.RATE_LIMIT_LIMIT)
+            : 1,
+        },
+      ],
+    }),
     UsersModule,
     AuthModule,
     SessionModule,
@@ -55,7 +78,10 @@ import Product from './modules/product/entities/product.entity';
     ProductModule,
   ],
   controllers: [],
-  providers: [TypeOrmConfigService],
+  providers: [TypeOrmConfigService, {
+    provide: APP_GUARD, //TODO: validar rateLimiting
+    useClass: ThrottlerGuard
+  }],
 })
 export class AppModule {
   constructor() {}

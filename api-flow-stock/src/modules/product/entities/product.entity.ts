@@ -43,6 +43,9 @@ export default class Product {
   @Column({ type: 'tinyint', nullable: false })
   deleted: number;
 
+  @Column({ type: 'varchar', length: 255 })
+  imgUrl: string;
+
   @ManyToOne(() => User, {
     nullable: false,
     onDelete: 'NO ACTION',

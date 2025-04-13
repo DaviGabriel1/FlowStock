@@ -1,35 +1,84 @@
+import { UploadService } from './../upload/upload.service';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import Product from './entities/product.entity';
 import { ProductService } from './product.service';
-import { Body, Controller, Delete, Get, Param, Post, Put } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Delete,
+  FileTypeValidator,
+  Get,
+  Param,
+  ParseFilePipe,
+  Post,
+  Put,
+  UnprocessableEntityException,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
+import { FileSizeValidationPipe } from './pipes/max-size-photo.pipe';
 
 @Controller('products')
 export class ProductController {
-    constructor(private productService: ProductService) { }
-    
-    @Get()
-    async getFindAll() {
-        return this.productService.findAll();
-    }
-    @Get(':id')
-    async getFindOne(@Param('id') id: string): Promise<Product | null> {
-        return await this.productService.findOne(id);
-    }
+  constructor(
+    private productService: ProductService,
+    private uploadService: UploadService
+  ) {}
 
-    @Post()
-    async create(@Body() product: CreateProductDto): Promise<Product | null> {
-        return this.productService.createProduct(product);
-    }
+  @Get()
+  async getFindAll() {
+    return this.productService.findAll();
+  }
+  @Get(':id')
+  async getFindOne(@Param('id') id: string): Promise<Product | null> {
+    return await this.productService.findOne(id);
+  }
 
-    @Put(':id')
-    async update(@Param('id') id: string,@Body() product: UpdateProductDto): Promise<any> {
-        return this.productService.updateProduct(id, product);
-    }
+  @Post()
+  async create(@Body() product: CreateProductDto): Promise<Product | null> {
+    return this.productService.createProduct(product);
+  }
 
-    @Delete(':id')
-    async softDelete(@Param('id') id: string): Promise<any> {
-        return this.productService.softDelete(id);
-    }
+  @Put(':id')
+  async update(
+    @Param('id') id: string,
+    @Body() product: UpdateProductDto
+  ): Promise<any> {
+    return this.productService.updateProduct(id, product);
+  }
 
+  @Delete(':id')
+  async softDelete(@Param('id') id: string): Promise<any> {
+    return this.productService.softDelete(id);
+  }
+
+  @Post('upload-photo/:id')
+  @UseInterceptors(FileInterceptor('product-photo'))
+  async uploadPhoto(
+    @UploadedFile(
+      new FileSizeValidationPipe(),
+      new ParseFilePipe({
+        validators: [
+          new FileTypeValidator({ fileType: /(image\/png|image\/jpeg)/ }),
+        ],
+      })
+    )
+    file: Express.Multer.File,
+    @Param('id') id: string
+  ): Promise<any> {
+    const user = await this.productService.findOne(id);
+    if (!user) {
+      throw new UnprocessableEntityException('usuário não encontrado');
+    }
+    const uploadUrl = await this.uploadService.upload(
+      file.originalname,
+      file.buffer
+    );
+    await this.productService.updateProduct(id, { ...user, imgUrl: uploadUrl });
+    return {
+      message: 'upload concluido',
+    };
+  }
 }
