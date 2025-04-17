@@ -1,4 +1,9 @@
-import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { UsersModule } from '../users/users.module';
@@ -13,12 +18,10 @@ import { ValidateRegisterPasswordMiddleware } from './middlewares/validate-regis
   providers: [AuthService, JwtService],
   exports: [AuthService],
 })
-export class AuthModule implements NestModule{
+export class AuthModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(ValidateRegisterPasswordMiddleware)
       .forRoutes({ path: 'auth/email/register', method: RequestMethod.POST });
   }
-
-
 }

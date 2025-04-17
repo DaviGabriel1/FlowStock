@@ -1,5 +1,4 @@
 import {
-  ArgumentMetadata,
   Injectable,
   PayloadTooLargeException,
   PipeTransform,
@@ -7,10 +6,7 @@ import {
 
 @Injectable()
 export class FileSizeValidationPipe implements PipeTransform {
-  transform(
-    value: Express.Multer.File | undefined,
-    metadata: ArgumentMetadata
-  ): Express.Multer.File {
+  transform(value: Express.Multer.File | undefined): Express.Multer.File {
     if (!value) {
       throw new PayloadTooLargeException('foto não enviada');
     }

@@ -1,11 +1,9 @@
-/* eslint-disable prettier/prettier */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-import { Body, Controller, HttpCode, HttpStatus, Post } from "@nestjs/common";
-import { AuthService } from "./auth.service";
-import { AuthRegisterLoginDto } from "./dto/auth-register-login.dto";
-import { AuthConfirmEmailDto } from "./dto/auth-confirm-email.dto";
-import { AuthEmailLoginDto } from "./dto/auth-email-login.dto";
-import { LoginResponseDto } from "./dto/login-response.dto";
+import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import { AuthService } from './auth.service';
+import { AuthRegisterLoginDto } from './dto/auth-register-login.dto';
+import { AuthConfirmEmailDto } from './dto/auth-confirm-email.dto';
+import { AuthEmailLoginDto } from './dto/auth-email-login.dto';
+import { LoginResponseDto } from './dto/login-response.dto';
 
 @Controller({
   path: 'auth',
@@ -41,5 +39,4 @@ export class AuthController {
   public login(@Body() loginDto: AuthEmailLoginDto): Promise<LoginResponseDto> {
     return this.authService.validateLogin(loginDto);
   }
-
 }

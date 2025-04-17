@@ -78,10 +78,13 @@ import { APP_GUARD } from '@nestjs/core';
     ProductModule,
   ],
   controllers: [],
-  providers: [TypeOrmConfigService, {
-    provide: APP_GUARD, //TODO: validar rateLimiting
-    useClass: ThrottlerGuard
-  }],
+  providers: [
+    TypeOrmConfigService,
+    {
+      provide: APP_GUARD, //TODO: validar rateLimiting
+      useClass: ThrottlerGuard,
+    },
+  ],
 })
 export class AppModule {
   constructor() {}

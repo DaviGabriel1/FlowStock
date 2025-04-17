@@ -1,10 +1,9 @@
-
-import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import Session from "../entities/session.entity";
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import Session from '../entities/session.entity';
 import { Repository } from 'typeorm';
 import { SessionMapper } from '../mapper/session.mapper';
-import User from "src/modules/users/entities/user.entity";
+import User from 'src/modules/users/entities/user.entity';
 
 @Injectable()
 export class SessionRepository {
@@ -59,7 +58,7 @@ export class SessionRepository {
     });
   }
 
-  async deleteByUserId(conditions: {userId: User['id']}): Promise<void> {
+  async deleteByUserId(conditions: { userId: User['id'] }): Promise<void> {
     await this.sessionRepository.softDelete({
       id: Number(conditions),
     });

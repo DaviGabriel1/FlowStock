@@ -10,7 +10,6 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
     const synchronize = this.configService.get('mysql.synchronize', {
       infer: true,
     });
-    console.log('Synchronize:', synchronize);
 
     return {
       type: this.configService.get('mysql.type', { infer: true }),

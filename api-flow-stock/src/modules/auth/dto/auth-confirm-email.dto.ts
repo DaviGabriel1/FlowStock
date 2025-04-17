@@ -1,6 +1,6 @@
-import { IsNotEmpty } from "class-validator";
+import { IsNotEmpty } from 'class-validator';
 
-export class AuthConfirmEmailDto{
-    @IsNotEmpty()
-    hash: string;
+export class AuthConfirmEmailDto {
+  @IsNotEmpty()
+  hash: string;
 }

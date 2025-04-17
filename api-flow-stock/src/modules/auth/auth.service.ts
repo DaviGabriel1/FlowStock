@@ -1,7 +1,12 @@
 import { SessionService } from './../session/session.service';
 import { MailService } from './../mail/mail.service';
 import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
-import { HttpStatus, Injectable, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
+import {
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { AllConfigType } from '../../config/config.type';
@@ -13,10 +18,10 @@ import { AuthEmailLoginDto } from './dto/auth-email-login.dto';
 import { LoginResponseDto } from './dto/login-response.dto';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
-import ms from 'ms';
 import Session from '../session/entities/session.entity';
 import { ProviderEnum } from './auth-providers.enum';
 import { SocialInterface } from '../social/interfaces/social.interface';
+import { parseToMs } from 'src/utils/transformers/parse-ms.transformer';
 
 @Injectable()
 export class AuthService {
@@ -127,10 +132,7 @@ export class AuthService {
 
     const user = await this.userService.findOne(userId);
 
-    if (
-      !user ||
-      user?.active !== 0
-    ) {
+    if (!user || user?.active !== 0) {
       throw new NotFoundException({
         status: HttpStatus.NOT_FOUND,
         error: `user not found`,
@@ -149,8 +151,8 @@ export class AuthService {
       throw new UnprocessableEntityException({
         status: HttpStatus.UNPROCESSABLE_ENTITY,
         errors: {
-          email: 'not found'
-        }
+          email: 'not found',
+        },
       });
     }
 
@@ -167,8 +169,8 @@ export class AuthService {
       throw new UnprocessableEntityException({
         status: HttpStatus.UNPROCESSABLE_ENTITY,
         errors: {
-          password: 'incorrect Password'
-        }
+          password: 'incorrect Password',
+        },
       });
     }
 
@@ -190,10 +192,10 @@ export class AuthService {
       .createHash('sha256')
       .update(randomStringGenerator())
       .digest('hex');
-    
+
     const session = await this.sessionService.create({
       user,
-      hash
+      hash,
     });
 
     const { token, refreshToken, tokenExpires } = await this.getTokensData({
@@ -201,21 +203,20 @@ export class AuthService {
       level: user.level,
       sessionId: session.id,
       hash,
-    })
-
+    });
 
     return {
       refreshToken,
       token,
       tokenExpires,
       user,
-    }
+    };
   }
 
   async validateSocialLogin(
     authProvider: ProviderEnum,
     socialData: SocialInterface
-  ): Promise<LoginResponseDto>{
+  ): Promise<LoginResponseDto> {
     let user: User | null = null;
     const socialEmail = socialData.email?.toLowerCase();
     let userByEmail: User | null = null;
@@ -227,7 +228,7 @@ export class AuthService {
     if (socialData.id) {
       user = await this.userService.findBySocialIdAndProvider({
         socialId: socialData.id,
-        provider: authProvider
+        provider: authProvider,
       });
     }
 
@@ -236,11 +237,9 @@ export class AuthService {
         user.email = socialEmail;
       }
       await this.userService.update(user.id, user);
-    }
-    else if (userByEmail) {
+    } else if (userByEmail) {
       user = userByEmail;
-    }
-    else if (socialData.id) {
+    } else if (socialData.id) {
       const active = 1;
 
       user = await this.userService.create({
@@ -251,7 +250,8 @@ export class AuthService {
         phone: '11-9999999', //TODO: tornar campos de password, phone, etc opcionais e DEFAULT NULL nos DTOs de createUserByOAuth
         socialId: socialData.id,
         level: RoleEnum.USER,
-        avatar: 'https://flowstock-react.s3.us-east-2.amazonaws.com/avatar-user/avatar+padrao.jpg',
+        avatar:
+          'https://flowstock-react.s3.us-east-2.amazonaws.com/avatar-user/avatar+padrao.jpg',
         provider: authProvider,
         active,
       });
@@ -262,22 +262,26 @@ export class AuthService {
       throw new UnprocessableEntityException({
         status: HttpStatus.UNPROCESSABLE_ENTITY,
         errors: {
-          user: 'user not found'
-        }
-      })
+          user: 'user not found',
+        },
+      });
     }
 
     const hash = crypto
       .createHash('sha256')
       .update(randomStringGenerator())
       .digest('hex');
-    
+
     const session = await this.sessionService.create({
       user,
-      hash
+      hash,
     });
 
-    const { token: jwtToken, refreshToken, tokenExpires } = await this.getTokensData({
+    const {
+      token: jwtToken,
+      refreshToken,
+      tokenExpires,
+    } = await this.getTokensData({
       id: user.id,
       level: user.level,
       sessionId: session.id,
@@ -293,51 +297,51 @@ export class AuthService {
   }
 
   private async getTokensData(data: {
-    id: User['id'],
-    level: User['level'],
-    sessionId: Session['id'],
+    id: User['id'];
+    level: User['level'];
+    sessionId: Session['id'];
     hash: Session['hash'];
-  }){
+  }) {
     const tokenExpiresIn = this.configService.getOrThrow('auth.expires', {
-      infer: true
+      infer: true,
     });
 
-    const tokenExpires = Date.now() + ms(tokenExpiresIn);
+    const tokenExpires = Date.now() + parseToMs(tokenExpiresIn);
 
-     const [token, refreshToken] = await Promise.all([
-       await this.jwtService.signAsync(
-         {
-           id: data.id,
-           level: data.level,
-           sessionId: data.sessionId,
-         },
-         {
-           secret: this.configService.getOrThrow('auth.secret', {
-             infer: true,
-           }),
-           expiresIn: tokenExpiresIn,
-         }
-       ),
-       await this.jwtService.signAsync(
-         {
-           sessionId: data.sessionId,
-           hash: data.hash,
-         },
-         {
-           secret: this.configService.getOrThrow('auth.refreshSecret', {
-             infer: true,
-           }),
-           expiresIn: this.configService.getOrThrow('auth.refreshExpires', {
-             infer: true,
-           }),
-         }
-       ),
-     ]);
-    
+    const [token, refreshToken] = await Promise.all([
+      await this.jwtService.signAsync(
+        {
+          id: data.id,
+          level: data.level,
+          sessionId: data.sessionId,
+        },
+        {
+          secret: this.configService.getOrThrow('auth.secret', {
+            infer: true,
+          }),
+          expiresIn: tokenExpiresIn,
+        }
+      ),
+      await this.jwtService.signAsync(
+        {
+          sessionId: data.sessionId,
+          hash: data.hash,
+        },
+        {
+          secret: this.configService.getOrThrow('auth.refreshSecret', {
+            infer: true,
+          }),
+          expiresIn: this.configService.getOrThrow('auth.refreshExpires', {
+            infer: true,
+          }),
+        }
+      ),
+    ]);
+
     return {
       token,
       refreshToken,
-      tokenExpires
+      tokenExpires,
     };
   }
 }

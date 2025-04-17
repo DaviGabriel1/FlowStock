@@ -1,6 +1,6 @@
 export enum ProviderEnum {
-    EMAIL = 'email',
-    GOOGLE = 'google',
-    FACEBOOK = 'facebook',
-    APPLE = 'apple',
+  EMAIL = 'email',
+  GOOGLE = 'google',
+  FACEBOOK = 'facebook',
+  APPLE = 'apple',
 }
