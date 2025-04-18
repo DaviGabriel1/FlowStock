@@ -34,8 +34,8 @@ export class ProductService {
 
   async updateProduct(id: string, product: UpdateProductDto): Promise<any> {
     const { affected } = await this.productRepository.update(id, product);
-
-    if (affected == 0) {
+    console.log(affected);
+    if (affected == 0 || !affected) {
       throw new UnprocessableEntityException({
         status: 422,
         errors: {
