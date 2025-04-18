@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import Session from '../entities/session.entity';
 import { Repository } from 'typeorm';
 import { SessionMapper } from '../mapper/session.mapper';
-import User from 'src/modules/users/entities/user.entity';
+import User from 'src/users/entities/user.entity';
 
 @Injectable()
 export class SessionRepository {

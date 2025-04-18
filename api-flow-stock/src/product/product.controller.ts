@@ -1,4 +1,4 @@
-import { UploadService } from './../upload/upload.service';
+import { UploadService } from '../upload/upload.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
