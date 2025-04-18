@@ -1,5 +1,5 @@
 import { MailData } from './interfaces/mail-data.interface';
-import { AllConfigType } from './../../config/config.type';
+import { AllConfigType } from '../config/config.type';
 import { ConfigService } from '@nestjs/config';
 import { MailerService } from '../mailer/mailer.service';
 import { Injectable } from '@nestjs/common';
@@ -37,12 +37,7 @@ export class MailService {
     const url = new URL(frontendDomain);
     url.hash = `/confirm-email/?hash=${mailData.data.hash}`;
 
-    const subDirectory = [
-      'modules',
-      'mail',
-      'mail-templates',
-      'activation.hbs',
-    ];
+    const subDirectory = ['mail', 'mail-templates', 'activation.hbs'];
     const templateBasePath =
       process.env.NODE_ENV === 'production'
         ? this.configService.getOrThrow('app.workingDirectory', { infer: true })

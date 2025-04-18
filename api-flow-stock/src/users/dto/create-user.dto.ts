@@ -6,9 +6,9 @@ import {
   IsNotEmpty,
   IsOptional,
   IsInt,
-  IsEnum
+  IsEnum,
 } from 'class-validator';
-import { ProviderEnum } from 'src/modules/auth/auth-providers.enum';
+import { ProviderEnum } from 'src/auth/auth-providers.enum';
 import { RoleEnum } from 'src/roles/roles.enum';
 
 export class CreateUserDto {
@@ -46,11 +46,11 @@ export class CreateUserDto {
   avatar: string;
 
   @IsString()
-  @IsOptional() 
+  @IsOptional()
   socialId: string | null = null;
 
   @IsEnum(ProviderEnum)
-  provider: ProviderEnum = ProviderEnum.EMAIL; 
+  provider: ProviderEnum = ProviderEnum.EMAIL;
 
   @IsNotEmpty()
   @Transform(({ value }) => value || RoleEnum.USER)

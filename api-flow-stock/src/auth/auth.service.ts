@@ -1,5 +1,5 @@
-import { SessionService } from './../session/session.service';
-import { MailService } from './../mail/mail.service';
+import { SessionService } from '../session/session.service';
+import { MailService } from '../mail/mail.service';
 import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
 import {
   HttpStatus,
@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { AllConfigType } from '../../config/config.type';
+import { AllConfigType } from '../config/config.type';
 import { AuthRegisterLoginDto } from './dto/auth-register-login.dto';
 import { RoleEnum } from 'src/roles/roles.enum';
 import { UserService } from '../users/users.service';

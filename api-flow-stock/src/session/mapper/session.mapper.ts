@@ -1,4 +1,4 @@
-import { UserMapper } from 'src/modules/users/mapper/users.domain';
+import { UserMapper } from 'src/users/mapper/users.domain';
 import Session from '../entities/session.entity';
 
 export class SessionMapper {

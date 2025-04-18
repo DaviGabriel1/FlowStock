@@ -7,7 +7,7 @@ import { ProductService } from './product.service';
 import { UploadService } from '../upload/upload.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Product])], 
+  imports: [TypeOrmModule.forFeature([Product])],
   controllers: [ProductController],
   providers: [ProductRepository, ProductService, UploadService],
   exports: [ProductService],

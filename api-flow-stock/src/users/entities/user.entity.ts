@@ -1,40 +1,67 @@
+/* eslint-disable prettier/prettier */
 import {
   Entity,
-  Column,
   PrimaryGeneratedColumn,
+  Column,
   CreateDateColumn,
   UpdateDateColumn,
+  Unique,
 } from 'typeorm';
+import { RoleEnum } from '../../roles/roles.enum';
+import { ProviderEnum } from '../../auth/auth-providers.enum';
 
 @Entity('users')
-export class User {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+@Unique(['email'])
+export default class User {
+  @PrimaryGeneratedColumn('increment', { type: 'bigint', unsigned: true })
+  id: number;
 
-  @Column({ length: 100 })
-  firstName: string;
+  @Column({ type: 'varchar', length: 191, nullable: false })
+  name: string;
 
-  @Column({ length: 100 })
-  lastName: string;
-
-  @Column({ length: 100, unique: true })
+  @Column({ type: 'varchar', length: 191, nullable: false })
   email: string;
 
-  @Column({ length: 100 })
+  @Column({ type: 'timestamp', nullable: true })
+  emailVerifiedAt: Date | null;
+
+  @Column({ type: 'varchar', length: 191, nullable: false })
   password: string;
 
-  @Column({ default: false })
-  isEmailConfirmed: boolean;
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  rememberToken: string | null;
 
-  @Column({ nullable: true })
-  confirmToken: string;
-
-  @Column({ nullable: true })
-  resetToken: string;
-
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'datetime' })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'datetime' })
   updatedAt: Date;
+
+  @Column({ type: 'varchar', length: 45, nullable: false })
+  phone: string;
+
+  @Column({ type: 'varchar', length: 45, nullable: false })
+  avatar: string;
+
+  @Column({
+    type: 'enum',
+    enum: RoleEnum,
+    default: RoleEnum.USER,
+    nullable: false,
+  })
+  level: RoleEnum;
+
+  @Column({
+    type: 'enum',
+    enum: ProviderEnum,
+    default: ProviderEnum.EMAIL,
+    nullable: false,
+  })
+  provider: ProviderEnum;
+
+  @Column({ type: 'varchar', length: 255, nullable: true, default: null })
+  socialId: string | null;
+
+  @Column({ type: 'tinyint', default: 0, nullable: false })
+  active: number; // Mantido como number (0 ou 1)
 }
