@@ -5,9 +5,8 @@
 
 # pem security
 *.pem
-APIs-nest.pem
 
-# Logsquero 
+# Logs
 logs
 *.log
 npm-debug.log*

@@ -1,9 +1,9 @@
-import { Injectable, UnprocessableEntityException } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { ProductRepository } from "./repositories/product.repository";
-import Product from "./entities/product.entity";
-import { CreateProductDto } from "./dto/create-product.dto";
-import { UpdateProductDto } from "./dto/update-product.dto";
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { ProductRepository } from './repositories/product.repository';
+import Product from './entities/product.entity';
+import { CreateProductDto } from './dto/create-product.dto';
+import { UpdateProductDto } from './dto/update-product.dto';
 
 @Injectable()
 export class ProductService {
@@ -39,13 +39,13 @@ export class ProductService {
       throw new UnprocessableEntityException({
         status: 422,
         errors: {
-          id: "Produto não encontrado",
+          id: 'Produto não encontrado',
         },
-      })
+      });
     }
     return {
       status: 200,
-      message: "Produto atualizado com sucesso",
+      message: 'Produto atualizado com sucesso',
     };
   }
 
@@ -58,13 +58,13 @@ export class ProductService {
       throw new UnprocessableEntityException({
         status: 422,
         errors: {
-          id: "Produto não encontrado",
+          id: 'Produto não encontrado',
         },
-      })
+      });
     }
     return {
       status: 200,
-      message: "Produto deletado com sucesso",
+      message: 'Produto deletado com sucesso',
     };
   }
 }
