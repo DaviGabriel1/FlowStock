@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { HttpStatus, Injectable, UnprocessableEntityException } from '@nestjs/common';
+import { HttpStatus, Injectable, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
 import User from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
@@ -19,8 +19,14 @@ export class UserService {
     return await this.userRepository.find();
   }
 
-  async findOne(id: number): Promise<User | null> {
-    return await this.userRepository.findOne({ where: { id } });
+  async findOne(id: number): Promise<User> {
+    const user = await this.userRepository.findOne({ where: { id } });
+
+    if (!user) {
+      throw new NotFoundException('usuário não encontrado');
+    }
+
+    return user;
   }
 
   async findByEmail(email: string): Promise<User | null> {

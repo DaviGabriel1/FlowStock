@@ -4,6 +4,7 @@ import { ProductRepository } from './repositories/product.repository';
 import Product from './entities/product.entity';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { DefaultResponseDto } from './dto/default-response.dto';
 
 @Injectable()
 export class ProductService {
@@ -34,7 +35,10 @@ export class ProductService {
     return await this.productRepository.save(product);
   }
 
-  async updateProduct(id: string, product: UpdateProductDto): Promise<any> {
+  async updateProduct(
+    id: string,
+    product: UpdateProductDto
+  ): Promise<DefaultResponseDto> {
     const { affected } = await this.productRepository.update(id, product);
     if (affected == 0 || !affected) {
       throw new UnprocessableEntityException({
@@ -50,7 +54,7 @@ export class ProductService {
     };
   }
 
-  async softDelete(id: string): Promise<{ status: number; message: string }> {
+  async softDelete(id: string): Promise<DefaultResponseDto> {
     const { affected } = await this.productRepository.update(id, {
       deleted: 1,
     });
