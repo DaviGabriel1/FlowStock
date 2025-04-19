@@ -1,4 +1,10 @@
-import { IsInt, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
+import {
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class UserDto {
@@ -15,6 +21,10 @@ export class CreateProductDto {
   @IsString()
   @IsNotEmpty()
   sku: string;
+
+  @IsString()
+  @IsOptional()
+  description: string;
 
   @IsInt()
   @IsNotEmpty()

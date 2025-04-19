@@ -9,6 +9,10 @@ export class UpdateProductDto {
   @IsOptional()
   sku: string;
 
+  @IsString()
+  @IsOptional()
+  description: string;
+
   @IsInt()
   @IsOptional()
   quantity: number;

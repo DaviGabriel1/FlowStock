@@ -47,6 +47,7 @@ describe('productService', () => {
         user: {
           id: 19,
         },
+        description: 'teste',
       };
 
       await productservice.createProduct(createProductDto);
@@ -67,6 +68,7 @@ describe('productService', () => {
         user: {
           id: 0,
         },
+        description: 'teste',
       };
 
       jest
@@ -105,6 +107,7 @@ describe('productService', () => {
           updatedAt: new Date('2025-04-13T23:02:17.649Z'),
           deleted: 0,
           imgUrl: '',
+          description: 'teste',
         },
         {
           id: '74fcd014-6d23-4d00-9350-8159bbf170ac',
@@ -118,6 +121,7 @@ describe('productService', () => {
           updatedAt: new Date('2025-04-13T23:02:17.649Z'),
           deleted: 0,
           imgUrl: '',
+          description: 'teste',
         },
       ];
 
@@ -142,6 +146,7 @@ describe('productService', () => {
         category: 'teste',
         imgUrl: 'teste',
         deleted: 0,
+        description: 'teste',
       };
 
       const affected = 1;
@@ -176,6 +181,7 @@ describe('productService', () => {
           category: 'teste',
           imgUrl: 'teste',
           deleted: 0,
+          description: 'teste',
         })
       ).rejects.toThrow(
         new UnprocessableEntityException({
