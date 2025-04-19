@@ -55,6 +55,29 @@ describe('productService', () => {
       expect(productRepository.save).toHaveBeenCalledTimes(1);
       expect(productRepository.save).toHaveBeenCalledWith(createProductDto);
     });
+
+    it('deve lançar uma exceção ao criar um produto inválido', async () => {
+      const createProductDto: CreateProductDto = {
+        name: '',
+        sku: '',
+        quantity: -1,
+        minStock: -10,
+        price: '',
+        category: '',
+        user: {
+          id: 0,
+        },
+      };
+
+      jest
+        .spyOn(productRepository, 'save')
+        .mockRejectedValue(new Error('Invalid data'));
+
+      await expect(
+        productservice.createProduct(createProductDto)
+      ).rejects.toThrow('Invalid data');
+      expect(productRepository.save).toHaveBeenCalledTimes(1);
+    });
   });
   describe('findOne', () => {
     test('deve retornar um produto', async () => {
@@ -201,3 +224,5 @@ describe('productService', () => {
     });
   });
 });
+
+//TODO: testing dos DTOs

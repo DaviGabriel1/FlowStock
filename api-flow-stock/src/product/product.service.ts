@@ -18,11 +18,13 @@ export class ProductService {
   /*
   async findAllWithUsers(): Promise<any> { 
     return await this.productRepository.find({ relations: ['user'] });
-  }
+  }*/
 
   async findProductsByUserId(userId: number): Promise<Product[]> {
-    return await this.productRepository.find();
-  }*/
+    return await this.productRepository.find({
+      where: { user: { id: userId } },
+    });
+  }
 
   async findOne(id: string): Promise<Product | null> {
     return await this.productRepository.findOne({ where: { id, deleted: 0 } });
@@ -34,7 +36,6 @@ export class ProductService {
 
   async updateProduct(id: string, product: UpdateProductDto): Promise<any> {
     const { affected } = await this.productRepository.update(id, product);
-    console.log(affected);
     if (affected == 0 || !affected) {
       throw new UnprocessableEntityException({
         status: 422,
@@ -49,7 +50,7 @@ export class ProductService {
     };
   }
 
-  async softDelete(id: string): Promise<any> {
+  async softDelete(id: string): Promise<{ status: number; message: string }> {
     const { affected } = await this.productRepository.update(id, {
       deleted: 1,
     });

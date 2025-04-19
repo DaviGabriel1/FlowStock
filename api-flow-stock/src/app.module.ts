@@ -57,7 +57,9 @@ import { APP_GUARD } from '@nestjs/core';
       password: process.env.MYSQL_PASSWORD,
       database: process.env.MYSQL_DATABASE,
       entities: [User, Session, Product],
-      synchronize: true,
+      synchronize: process.env.MYSQL_SYNCHRONIZE
+        ? process.env.MYSQL_SYNCHRONIZE == 'true'
+        : true,
     }),
     ThrottlerModule.forRoot({
       throttlers: [
@@ -68,6 +70,9 @@ import { APP_GUARD } from '@nestjs/core';
           limit: process.env.RATE_LIMIT_LIMIT
             ? parseInt(process.env.RATE_LIMIT_LIMIT)
             : 1,
+          blockDuration: process.env.RATE_BLOCK_DURATION
+            ? parseInt(process.env.RATE_BLOCK_DURATION)
+            : 10000,
         },
       ],
     }),

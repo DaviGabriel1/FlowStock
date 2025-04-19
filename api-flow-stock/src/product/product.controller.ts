@@ -14,9 +14,11 @@ import {
   ParseFilePipe,
   Post,
   Put,
+  Query,
   UnprocessableEntityException,
   UploadedFile,
   UseInterceptors,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { FileSizeValidationPipe } from './pipes/max-size-photo.pipe';
 
@@ -31,6 +33,14 @@ export class ProductController {
   async getFindAll() {
     return this.productService.findAll();
   }
+
+  @Get('by-user')
+  async getProductByUserId(
+    @Query('userId', ParseIntPipe) userId: number
+  ): Promise<Product[] | null> {
+    return await this.productService.findProductsByUserId(userId);
+  }
+
   @Get(':id')
   async getFindOne(@Param('id') id: string): Promise<Product | null> {
     return await this.productService.findOne(id);
