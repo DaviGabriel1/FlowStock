@@ -1,0 +1,56 @@
+version: '3.8'
+services:
+  flowstock_api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    ports:
+      - '8000:8000'
+    environment:
+      - PORT=${PORT}
+      - NODE_ENV=${NODE_ENV}
+    volumes:
+      - ./src:/usr/src/app/src
+    depends_on:
+      mysql_db:
+        condition: service_healthy
+    networks:
+      - flowstock_network
+
+  mysql_db:
+    image: mysql:8.0
+    ports:
+      - '3306:3306'
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=flowstock_user
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'mysqladmin',
+          'ping',
+          '-h',
+          'localhost',
+          '-u',
+          'root',
+          '-p${MYSQL_PASSWORD}',
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - flowstock_network
+
+volumes:
+  mysql_data:
+
+networks:
+  flowstock_network:
+    driver: bridge

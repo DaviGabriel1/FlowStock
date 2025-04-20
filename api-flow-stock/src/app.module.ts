@@ -45,13 +45,16 @@ import { APP_GUARD } from '@nestjs/core';
         googleConfig,
         s3Config,
       ],
-      envFilePath: ['.env'],
+      envFilePath: ['.env', '.env.production'],
     }),
     //infrastructureDatabaseModule,
     TypeOrmModule.forRoot({
       //TODO: databaseModuleConfig
       type: 'mysql',
-      host: process.env.MYSQL_HOST,
+      host:
+        process.env.NODE_ENV == 'production'
+          ? process.env.MYSQL_HOST
+          : 'mysql_db',
       port: Number(process.env.MYSQL_PORT),
       username: process.env.MYSQL_USER,
       password: process.env.MYSQL_PASSWORD,

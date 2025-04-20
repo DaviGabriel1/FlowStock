@@ -1,0 +1,21 @@
+version: '3.8'
+services:
+  flowstock_api:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    env_file:
+      - .env.production  
+    ports:
+      - '${PORT}:${PORT}'
+    environment:
+      - PORT=${PORT}
+      - NODE_ENV=${NODE_ENV}
+      - MYSQL_HOST=${MYSQL_HOST}
+      - MYSQL_PORT=${MYSQL_PORT}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_SYNCHRONIZE=${MYSQL_SYNCHRONIZE}
+    volumes:
+      - ./src:/usr/src/app/src

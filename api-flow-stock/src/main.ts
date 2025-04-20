@@ -29,7 +29,9 @@ async function bootstrap() {
   SwaggerModule.setup('docs', app, document);
 
   const PORT = process.env.PORT ?? 3000;
-  await app.listen(PORT, '0.0.0.0');
-  console.log(`servidor rodando na porta ${PORT}...`);
+  const MODE = process.env.NODE_ENV ?? 'development';
+  await app.listen(PORT, () => {
+    console.log(`servidor rodando no modo '${MODE}', na porta ${PORT}...`);
+  });
 }
 bootstrap();
